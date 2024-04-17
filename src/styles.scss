@@ -20,8 +20,12 @@
 @tailwind utilities;
 
 body {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 400;
-  font-size: 14px;
-  color: white;
+  // font-family: 'Roboto', sans-serif;
+  // font-weight: 400;
+  // font-size: 14px;
+  @apply font-['Roboto'] font-normal text-[14px];
+}
+
+.debug {
+  @apply border-2 border-red-500;
 }
