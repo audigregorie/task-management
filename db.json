@@ -3,12 +3,21 @@
     {
       "id": "1",
       "text": "Angular",
+      "status": "progress",
       "editing": false,
       "completed": false
     },
     {
       "id": "2",
       "text": "Javascript",
+      "status": "complete",
+      "editing": false,
+      "completed": false
+    },
+    {
+      "id": "3",
+      "text": "NodeJS",
+      "status": "open",
       "editing": false,
       "completed": false
     }
