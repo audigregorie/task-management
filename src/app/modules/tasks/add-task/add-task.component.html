@@ -1,1 +1,38 @@
-<p>add-task works!</p>
+<div class="card justify-content-center flex">
+  <p-button (click)="showDialog()" label="Add Task" class="button bg-blue-500 hover:bg-blue-600"></p-button>
+
+  <p-dialog header="Header" [(visible)]="visible" [modal]="true" [style]="{ width: '50rem', height: 'fit-content' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <ng-template pTemplate="header">
+      <span class="bg-blue-50 px-3 py-2 font-bold">New Task</span>
+    </ng-template>
+    <form>
+      <!-- // Task -->
+      <div class="form-group">
+        <label class="label" for="task">Task:</label>
+        <input class="input" type="text" name="task" />
+      </div>
+
+      <!-- // Description -->
+      <div class="form-group">
+        <label class="label" for="description">Description:</label>
+        <textarea class="textarea" name="description"></textarea>
+      </div>
+
+      <!-- // Dropdown -->
+      <div class="form-group">
+        <label class="label" for="status">Dropdown:</label>
+        <select class="dropdown" name="status">
+          <option value="open">Open</option>
+          <option value="progress">Progress</option>
+          <option value="complete">Complete</option>
+        </select>
+      </div>
+
+      <!-- // Button -->
+      <div class="flex justify-end">
+        <p-button label="Post" class="button bg-blue-500 hover:bg-blue-600"></p-button>
+      </div>
+    </form>
+  </p-dialog>
+</div>

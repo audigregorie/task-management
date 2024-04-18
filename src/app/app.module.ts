@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core'
 import { BrowserModule } from '@angular/platform-browser'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TasksModule } from './tasks/tasks.module'
 import { AppRoutingModule } from './app-routing.module'
 
@@ -12,8 +13,8 @@ import { HomeComponent } from './modules/pages/home/home.component'
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, SidebarComponent, FooterComponent, HomeComponent],
-  imports: [BrowserModule, TasksModule, AppRoutingModule],
+  imports: [BrowserModule, BrowserAnimationsModule, TasksModule, AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
