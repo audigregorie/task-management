@@ -1,0 +1,16 @@
+table {
+  @apply w-full;
+  tr {
+    @apply flex border border-gray-300;
+    tr,
+    th {
+      @apply flex h-16 items-center  bg-gray-300;
+    }
+    td {
+      @apply h-24 px-4 py-4;
+    }
+  }
+  tr:nth-child(even) {
+    @apply bg-blue-50;
+  }
+}
