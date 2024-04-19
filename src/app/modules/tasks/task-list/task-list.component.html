@@ -9,30 +9,36 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td class="flex basis-1/12 items-center justify-center">
-          <div class="h-8 w-1 bg-violet-500"></div>
-        </td>
-        <td class="flex basis-1/2 flex-col gap-2">
-          <p class="text-xl font-medium">This is where the Task Title will be inserted</p>
-          <p class="text-sm">Task Description will be placed here in a smaller light weighted font</p>
-        </td>
-        <td class="flex basis-4/12 items-center justify-center">2024 August</td>
-        <td class="pi pi-ellipsis-h flex basis-1/12 items-center justify-center text-xl"></td>
-      </tr>
+      <ng-container *ngIf="tasks$ | async as tasks">
+        <tr *ngFor="let task of tasks">
+          <!-- Status -->
+          <td class="flex basis-1/12 items-center justify-center">
+            <ng-container *ngIf="task.status === 'open'">
+              <div class="h-8 w-1 bg-red-500"></div>
+            </ng-container>
 
-      <!-- 2nd Task example -->
-      <tr>
-        <td class="flex basis-1/12 items-center justify-center">
-          <div class="h-8 w-1 bg-violet-500"></div>
-        </td>
-        <td class="flex basis-1/2 flex-col gap-2">
-          <p class="text-xl font-medium">This is where the Task Title will be inserted</p>
-          <p class="text-sm">Task Description will be placed here in a smaller light weighted font</p>
-        </td>
-        <td class="flex basis-4/12 items-center justify-center">2024 August</td>
-        <td class="pi pi-ellipsis-h flex basis-1/12 items-center justify-center text-xl"></td>
-      </tr>
+            <ng-container *ngIf="task.status === 'progress'">
+              <div class="h-8 w-1 bg-violet-500"></div>
+            </ng-container>
+
+            <ng-container *ngIf="task.status === 'complete'">
+              <div class="h-8 w-1 bg-green-500"></div>
+            </ng-container>
+          </td>
+
+          <!-- Task -->
+          <td class="flex basis-1/2 flex-col gap-2">
+            <p class="text-xl font-medium">{{ task.task }}</p>
+            <p class="text-sm">{{ task.description }}</p>
+          </td>
+
+          <!-- Date Created -->
+          <td class="flex basis-4/12 items-center justify-center">{{ task.dateCreated }}</td>
+
+          <!-- More Options -->
+          <td class="pi pi-ellipsis-h flex basis-1/12 items-center justify-center text-xl"></td>
+        </tr>
+      </ng-container>
     </tbody>
   </table>
 </div>

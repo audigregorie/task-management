@@ -8,6 +8,8 @@ import { InputGroupModule } from 'primeng/inputgroup'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { InputTextareaModule } from 'primeng/inputtextarea'
 
+import { DatePipe } from '@angular/common'
+
 // Components
 import { ManageTasksComponent } from '../modules/tasks/manage-tasks/manage-tasks.component'
 import { TaskListComponent } from '../modules/tasks/task-list/task-list.component'
@@ -26,6 +28,7 @@ import { AddTaskComponent } from '../modules/tasks/add-task/add-task.component'
     InputGroupAddonModule,
     InputTextareaModule,
   ],
+  providers: [DatePipe],
   exports: [ManageTasksComponent, TaskListComponent, AddTaskComponent],
 })
-export class TasksModule { }
+export class TasksModule {}
