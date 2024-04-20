@@ -10,8 +10,8 @@ import { DatePipe } from '@angular/common'
   styleUrl: './add-task.component.scss',
 })
 export class AddTaskComponent {
-  public visible: boolean = false
   public taskForm: FormGroup
+  public visible: boolean = false
 
   // Initialize the form.
   constructor(

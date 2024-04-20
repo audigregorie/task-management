@@ -32,13 +32,19 @@ export class TaskService {
   public getTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(environment.baseUrl).pipe(
       map((data) => data),
-      tap((data) => this.log(data)),
+      // tap((data) => this.log(data)),
       catchError((error) => this.logError(error, [])),
     )
   }
 
-  // Add Task>
+  // Add Task.
   public addTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(environment.baseUrl, task).pipe(map((data) => data))
+    return this.http.post<Task>(environment.baseUrl, task)
+  }
+
+  // Delete Task.
+  public deleteTask(taskId: string): Observable<Task> {
+    const url = `${environment.baseUrl}/${taskId}`
+    return this.http.delete<Task>(url)
   }
 }

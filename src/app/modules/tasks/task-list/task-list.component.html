@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <th class="basis-1/12 justify-center">Status</th>
-        <th class="basis-1/2 px-4">Task</th>
+        <th class="basis-1/2 px-4">Task ({{ totalTaskCount }})</th>
         <th class="basis-4/12 justify-center">Date Created</th>
         <th class="basis-1/12 justify-center">More</th>
       </tr>
@@ -36,7 +36,20 @@
           <td class="flex basis-4/12 items-center justify-center">{{ task.dateCreated }}</td>
 
           <!-- More Options -->
-          <td class="pi pi-ellipsis-h flex basis-1/12 items-center justify-center text-xl"></td>
+          <td class="relative">
+            <button (click)="toggleDropdownById(task.id)"
+              class="pi pi-ellipsis-h flex basis-1/12 items-center justify-center text-xl"></button>
+
+            <!-- Dropdown Menu -->
+            <div *ngIf="openDropdownId === task.id"
+              class="absolute -left-16 z-[10] mt-2 w-48 rounded border bg-white shadow-lg">
+              <div class="py-1">
+                <button class="flex w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200">Edit</button>
+                <button (click)="deleteTask(task.id)"
+                  class="w-full px-4 py-2 text-left text-red-400 hover:bg-gray-200">Delete</button>
+              </div>
+            </div>
+          </td>
         </tr>
       </ng-container>
     </tbody>
