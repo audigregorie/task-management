@@ -74,17 +74,26 @@ export class TaskListComponent implements OnInit {
   }
 
   // Set the isEditing property to true
-  public onEditTask() {
-    this.task.isEditing = true
+  public onEditTask(task: Task) {
+    task.isEditing = true
+  }
+
+  public onQuickEditTask(task: Task) {
+    task.isEditing = true
+  }
+
+  // Cancel all edits
+  public onCancelEditing(task: Task) {
+    task.isEditing = false
+    this.closeDropdown()
+    console.log('Escaped key pressed')
   }
 
   // Cycle through task statuses if editing
   public cycleStatus(task: Task) {
-    if (task.isEditing === true) {
-      const statuses = ['open', 'progress', 'complete']
-      const currentIndex = statuses.indexOf(task.status)
-      const nextIndex = (currentIndex + 1) % statuses.length
-      task.status = statuses[nextIndex]
-    }
+    const statuses = ['open', 'progress', 'complete']
+    const currentIndex = statuses.indexOf(task.status)
+    const nextIndex = (currentIndex + 1) % statuses.length
+    task.status = statuses[nextIndex]
   }
 }

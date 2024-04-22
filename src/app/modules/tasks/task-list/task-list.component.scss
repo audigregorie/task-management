@@ -1,16 +1,37 @@
 table {
   @apply w-full;
+
   tr {
     @apply flex border border-gray-300;
-    tr,
+
     th {
       @apply flex h-16 items-center  bg-gray-300;
     }
+
     td {
-      @apply h-24 px-4 py-4;
+      @apply h-fit min-h-24 px-4 py-4;
+
+      .textarea {
+        @apply pt-2;
+      }
+
+      .input,
+      .textarea {
+        @apply box-border border border-transparent border-b-gray-200 pb-2;
+      }
+    }
+
+    .input:focus,
+    .textarea:focus {
+      @apply outline-none;
     }
   }
+
   tr:nth-child(even) {
     @apply bg-blue-50;
+    .input,
+    .textarea {
+      @apply bg-blue-50;
+    }
   }
 }
