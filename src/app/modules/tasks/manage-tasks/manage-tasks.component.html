@@ -2,6 +2,7 @@
   <div class="flex gap-4">
     <app-add-task></app-add-task>
     <!-- <button class="rounded bg-blue-500 px-6 py-2 font-bold text-white hover:bg-blue-600">Add Task</button> -->
-    <button class="rounded bg-red-500 px-6 py-2 font-bold text-white hover:bg-red-600">Clear All</button>
+    <button (click)="onClearTasks()" class="rounded bg-red-500 px-6 py-2 font-bold text-white hover:bg-red-600">Clear
+      All</button>
   </div>
 </div>

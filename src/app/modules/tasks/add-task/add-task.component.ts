@@ -32,15 +32,15 @@ export class AddTaskComponent {
   }
 
   // Create a new task and send it to the subject variable. Reset and hide the form.
-  public sendingNewTaskSubject() {
+  public updateNewTaskSubject() {
     const newTask: Task = {
       ...this.taskForm.value,
-      editing: false,
-      completed: false,
+      isEditing: false,
+      isCompleted: false,
       id: Math.floor(Math.random() * 1000000).toString(),
       dateCreated: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
     }
-    this.taskService.onNewTaskSubject(newTask)
+    this.taskService.getNewTaskSubject(newTask)
     this.taskForm.reset()
     this.visible = false
   }

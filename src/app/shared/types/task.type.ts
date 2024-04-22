@@ -3,7 +3,7 @@ export type Task = {
   task: string
   description: string
   status: string
-  editing: boolean
-  completed: boolean
+  isEditing: boolean
+  isCompleted: boolean
   dateCreated: string
 }

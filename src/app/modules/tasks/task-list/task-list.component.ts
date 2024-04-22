@@ -11,9 +11,11 @@ import { Observable } from 'rxjs'
 export class TaskListComponent implements OnInit {
   public date: Date = new Date()
   public openDropdownId: string | null = null
-  public tasks: Task[] = []
+  // FIX: Null operator
+  public task!: Task
+  public taskList: Task[] = []
+  // FIX: Null operator
   public tasks$!: Observable<Task[]>
-  // public totalTaskCount: number | null = null
   public totalTaskCount: number | null = null
 
   constructor(private taskService: TaskService) {}
@@ -23,36 +25,13 @@ export class TaskListComponent implements OnInit {
     this.loadTasks()
   }
 
-  // Question !
-  // public loadTasks() {
-  // this.tasks$ = this.taskService.getTasks()
-  // this.tasks$.pipe(
-  //   map((tasks: Task[]) => {
-  //     this.tasks = tasks
-  //   }),
-  // )
-  // }
-
-  // Question !
-  // public subscribeNewTaskSubject() {
-  //   this.taskService.newTaskSubject.pipe(
-  //     tap((task: Task) => {
-  //       this.taskService.addTask(task).pipe(
-  //         tap(() => {
-  //           this.loadTasks()
-  //         }),
-  //       )
-  //     }),
-  //   )
-  // }
-
   // Get all tasks from database and assign the variable array to the observable array.
   public loadTasks() {
     this.tasks$ = this.taskService.getTasks()
     this.tasks$.subscribe({
       next: (tasks: Task[]) => {
-        this.tasks = tasks
-        this.totalTaskCount = this.tasks.length
+        this.taskList = tasks
+        this.totalTaskCount = this.taskList.length
       },
     })
   }
@@ -71,7 +50,7 @@ export class TaskListComponent implements OnInit {
   }
 
   // Toggle dropdown by id
-  public toggleDropdownById(taskId: string) {
+  public onToggleDropdownById(taskId: string) {
     if (this.openDropdownId === taskId) {
       this.openDropdownId = null
     } else {
@@ -85,12 +64,27 @@ export class TaskListComponent implements OnInit {
   }
 
   // Delete task.
-  public deleteTask(taskId: string) {
+  public onDeleteTask(taskId: string) {
     this.taskService.deleteTask(taskId).subscribe({
       next: () => {
         this.openDropdownId = taskId
         this.loadTasks()
       },
     })
+  }
+
+  // Set the isEditing property to true
+  public onEditTask() {
+    this.task.isEditing = true
+  }
+
+  // Cycle through task statuses if editing
+  public cycleStatus(task: Task) {
+    if (task.isEditing === true) {
+      const statuses = ['open', 'progress', 'complete']
+      const currentIndex = statuses.indexOf(task.status)
+      const nextIndex = (currentIndex + 1) % statuses.length
+      task.status = statuses[nextIndex]
+    }
   }
 }

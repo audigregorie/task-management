@@ -9,10 +9,10 @@
       </tr>
     </thead>
     <tbody>
-      <ng-container *ngIf="tasks$ | async as tasks">
-        <tr *ngFor="let task of tasks">
+      <ng-container *ngIf="tasks$ | async as taskList">
+        <tr *ngFor="let task of taskList">
           <!-- Status -->
-          <td class="flex basis-1/12 items-center justify-center">
+          <td (click)="cycleStatus(task)" class="flex basis-1/12 items-center justify-center">
             <ng-container *ngIf="task.status === 'open'">
               <div class="h-8 w-1 bg-red-500"></div>
             </ng-container>
@@ -37,13 +37,15 @@
 
           <!-- More Options -->
           <td class="relative flex basis-1/12 items-center justify-center">
-            <button (click)="toggleDropdownById(task.id)" class="pi pi-ellipsis-h text-xl"></button>
+            <button (click)="onToggleDropdownById(task.id)" class="pi pi-ellipsis-h text-xl"></button>
 
             <!-- Dropdown Menu -->
-            <div *ngIf="openDropdownId === task.id" class="absolute -left-16 z-[10] mt-2 w-48 rounded border bg-white shadow-lg">
+            <div *ngIf="openDropdownId === task.id"
+              class="absolute -left-16 z-[10] mt-2 w-48 rounded border bg-white shadow-lg">
               <div class="py-1">
                 <button class="flex w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200">Edit</button>
-                <button (click)="deleteTask(task.id)" class="w-full px-4 py-2 text-left text-red-400 hover:bg-gray-200">Delete</button>
+                <button (click)="onDeleteTask(task.id)"
+                  class="w-full px-4 py-2 text-left text-red-400 hover:bg-gray-200">Delete</button>
               </div>
             </div>
           </td>
