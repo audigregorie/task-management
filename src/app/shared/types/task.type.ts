@@ -6,4 +6,5 @@ export type Task = {
   isEditing: boolean
   isCompleted: boolean
   dateCreated: string
+  dueDate: string
 }

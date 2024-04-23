@@ -7,7 +7,8 @@
       "status": "progress",
       "isEditing": false,
       "isCompleted": false,
-      "dateCreated": "2024-04-18"
+      "dateCreated": "2024-04-18",
+      "dueDate": "2024-04-26"
     },
     {
       "id": "2",
@@ -16,7 +17,8 @@
       "status": "complete",
       "isEditing": false,
       "isCompleted": false,
-      "dateCreated": "2024-04-18"
+      "dateCreated": "2024-04-18",
+      "dueDate": "2024-04-26"
     },
     {
       "id": "3",
@@ -25,16 +27,29 @@
       "status": "open",
       "isEditing": false,
       "isCompleted": false,
-      "dateCreated": "2024-04-18"
+      "dateCreated": "2024-04-18",
+      "dueDate": "2024-04-26"
     },
     {
-      "id": "671604",
-      "task": "asdf",
-      "description": "asfdsafasfsaf",
+      "id": "831815",
+      "task": "asdff",
+      "description": "asdgsadgsag",
       "status": "open",
       "isEditing": false,
       "isCompleted": false,
-      "dateCreated": "2024-04-22"
+      "dateCreated": "2024-04-22",
+      "dueDate": "2024-04-26"
+    },
+    {
+      "id": "446560",
+      "task": "asfsafs",
+      "description": "sdfasfasf",
+      "status": "open",
+      "dueDate": "2024-04-22",
+      "isEditing": false,
+      "isCompleted": false,
+      "dateCreated": "2024-04-23",
+      "currentDate": "2024-04-23T00:02:04.293Z"
     }
   ]
 }

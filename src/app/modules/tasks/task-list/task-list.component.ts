@@ -9,7 +9,7 @@ import { Observable } from 'rxjs'
   styleUrl: './task-list.component.scss',
 })
 export class TaskListComponent implements OnInit {
-  public date: Date = new Date()
+  public currentDate: string = new Date().toISOString().split('T')[0]
   public openDropdownId: string | null = null
   // FIX: Null operator
   public task!: Task
@@ -49,6 +49,14 @@ export class TaskListComponent implements OnInit {
     })
   }
 
+  // Cycle through task statuses if editing
+  public cycleStatus(task: Task) {
+    const statuses = ['open', 'progress', 'complete']
+    const currentIndex = statuses.indexOf(task.status)
+    const nextIndex = (currentIndex + 1) % statuses.length
+    task.status = statuses[nextIndex]
+  }
+
   // Toggle dropdown by id
   public onToggleDropdownById(taskId: string) {
     if (this.openDropdownId === taskId) {
@@ -78,22 +86,17 @@ export class TaskListComponent implements OnInit {
     task.isEditing = true
   }
 
+  // A quicker way to edit a task
   public onQuickEditTask(task: Task) {
     task.isEditing = true
   }
+
+  public onUpdateTask() {}
 
   // Cancel all edits
   public onCancelEditing(task: Task) {
     task.isEditing = false
     this.closeDropdown()
     console.log('Escaped key pressed')
-  }
-
-  // Cycle through task statuses if editing
-  public cycleStatus(task: Task) {
-    const statuses = ['open', 'progress', 'complete']
-    const currentIndex = statuses.indexOf(task.status)
-    const nextIndex = (currentIndex + 1) % statuses.length
-    task.status = statuses[nextIndex]
   }
 }

@@ -23,6 +23,7 @@ export class AddTaskComponent {
       task: ['', [Validators.required]],
       description: [''],
       status: ['open', [Validators.required]],
+      dueDate: [''],
     })
   }
 
@@ -33,13 +34,21 @@ export class AddTaskComponent {
 
   // Create a new task and send it to the subject variable. Reset and hide the form.
   public updateNewTaskSubject() {
+    const randomIdNumber = Math.floor(Math.random() * 1000000).toString()
+    const dateCreated = this.datePipe.transform(new Date(), 'yyyy-MM-dd')
+    const dueDate = this.taskForm.get('dueDate')?.value
+    const currentDate = new Date().toISOString()
+
     const newTask: Task = {
       ...this.taskForm.value,
       isEditing: false,
       isCompleted: false,
-      id: Math.floor(Math.random() * 1000000).toString(),
-      dateCreated: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+      id: randomIdNumber,
+      dateCreated: dateCreated,
+      dueDate: dueDate,
+      currentDate: currentDate,
     }
+
     this.taskService.getNewTaskSubject(newTask)
     this.taskForm.reset()
     this.visible = false

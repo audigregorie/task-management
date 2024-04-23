@@ -5,6 +5,7 @@
         <th class="basis-1/12 justify-center">Status</th>
         <th class="basis-7/12 px-4">Task ({{ totalTaskCount }})</th>
         <th class="basis-2/12 justify-center">Date Created</th>
+        <th class="basis-2/12 justify-center">Due Date</th>
         <th class="basis-2/12 justify-center">More</th>
       </tr>
     </thead>
@@ -12,7 +13,7 @@
       <ng-container *ngIf="tasks$ | async as taskList">
         <tr *ngFor="let task of taskList">
           <!-- Status -->
-          <td (click)="cycleStatus(task)" class="flex basis-1/12 items-start justify-center">
+          <td (click)="cycleStatus(task)" class="flex basis-1/12 cursor-pointer items-start justify-center">
             <div *ngIf="task.status === 'open'" class="h-8 w-1 bg-red-500"></div>
             <div *ngIf="task.status === 'progress'" class="h-8 w-1 bg-violet-500"></div>
             <div *ngIf="task.status === 'complete'" class="h-8 w-1 bg-green-500"></div>
@@ -34,6 +35,17 @@
 
           <!-- Date Created -->
           <td class="flex basis-2/12 items-center justify-center">{{ task.dateCreated }}</td>
+
+          <!-- Due Date -->
+          <td class="flex basis-2/12 items-center justify-center">
+            <ng-container *ngIf="currentDate < task.dueDate">
+              <p>{{ task.dueDate }}</p>
+            </ng-container>
+
+            <ng-container *ngIf="currentDate >= task.dueDate">
+              <p class="text-red-400">{{ task.dueDate }}</p>
+            </ng-container>
+          </td>
 
           <!-- More Options -->
           <td class="relative flex basis-2/12 items-center justify-center">
