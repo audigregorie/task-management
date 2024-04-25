@@ -1,30 +1,24 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, EventEmitter, Output } from '@angular/core'
 import { TaskService } from '../../../shared/services/task.service'
-import { Task } from '../../../shared/types/task.type'
 
 @Component({
   selector: 'app-manage-tasks',
   templateUrl: './manage-tasks.component.html',
   styleUrl: './manage-tasks.component.scss',
 })
-export class ManageTasksComponent implements OnInit {
-  public taskList: Task[] = []
-  // FIX: Null operator
+export class ManageTasksComponent {
+  @Output() public update: EventEmitter<void> = new EventEmitter()
   constructor(private taskService: TaskService) {}
 
-  ngOnInit() {
-    this.taskService.getTasks().subscribe({
-      next: (tasks) => {
-        this.taskList = tasks
-      },
-    })
+  public updateTasks() {
+    this.update.emit()
   }
 
   // FIX: Not Working
   onClearTasks() {
-    this.taskService.deleteTasks().subscribe({
+    this.taskService.deleteAllTasks().subscribe({
       next: () => {
-        this.taskList = []
+        this.update.emit()
       },
     })
   }

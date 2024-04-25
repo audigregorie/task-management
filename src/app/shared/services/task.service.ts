@@ -2,24 +2,34 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { Task } from '../types/task.type'
 import { environment } from '../../../environments/environment.development'
-import { Observable, Subject, catchError, map, of } from 'rxjs'
+import { Observable, catchError, forkJoin, of, tap } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  public newTaskSubject = new Subject<Task>()
+  public tasks: Task[] = []
+  // private tasks: Task[] = []
+  private tasks$: Observable<Task[]> | null = null
 
   constructor(private http: HttpClient) {}
 
-  // Send function to sender component to receive the sending data.
-  public getNewTaskSubject(newTask: Task) {
-    this.newTaskSubject.next(newTask)
+  public deleteAllTasks() {
+    return forkJoin(
+      this.tasks.map((task) => {
+        return this.deleteTask(task.id)
+      }),
+    )
   }
 
-  // Log Response.
-  private log(response: any) {
-    console.log(response)
+  public setTasks() {
+    this.tasks$ = this.http.get<Task[]>(environment.baseUrl).pipe(
+      tap((tasks) => {
+        this.tasks = tasks
+      }),
+      catchError((error) => this.logError(error, [])),
+    )
+    return this.tasks$
   }
 
   // Log Error.
@@ -30,10 +40,13 @@ export class TaskService {
 
   // Get Tasks.
   public getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(environment.baseUrl).pipe(
-      map((data) => data),
-      catchError((error) => this.logError(error, [])),
-    )
+    return this.setTasks()
+  }
+
+  // Get Task.
+  public getTask(taskId: string): Observable<Task | null> {
+    const url = `${environment.baseUrl}/${taskId}`
+    return this.http.get<Task>(url)
   }
 
   // Add Task.
@@ -47,8 +60,8 @@ export class TaskService {
     return this.http.delete<Task>(url)
   }
 
-  // Delete All Tasks.
-  public deleteTasks(): Observable<void> {
-    return this.http.delete<void>(environment.baseUrl)
+  // Update Task.
+  public updateTask(task: Task, taskId: string): Observable<Task> {
+    return this.http.put<Task>(`${environment.baseUrl}/${taskId}`, task)
   }
 }

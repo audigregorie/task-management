@@ -1,8 +1,9 @@
-import { Component } from '@angular/core'
+import { Component, EventEmitter, Output } from '@angular/core'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 import { TaskService } from '../../../shared/services/task.service'
 import { Task } from '../../../shared/types/task.type'
 import { DatePipe } from '@angular/common'
+import { Status } from '../../../shared/types/status.enum'
 
 @Component({
   selector: 'app-add-task',
@@ -12,6 +13,7 @@ import { DatePipe } from '@angular/common'
 export class AddTaskComponent {
   public taskForm: FormGroup
   public visible: boolean = false
+  @Output() public update: EventEmitter<void> = new EventEmitter()
 
   // Initialize the form.
   constructor(
@@ -22,7 +24,7 @@ export class AddTaskComponent {
     this.taskForm = this.formBuilder.group({
       task: ['', [Validators.required]],
       description: [''],
-      status: ['open', [Validators.required]],
+      status: [Status.open, [Validators.required]],
       dueDate: [''],
     })
   }
@@ -49,8 +51,14 @@ export class AddTaskComponent {
       currentDate: currentDate,
     }
 
-    this.taskService.getNewTaskSubject(newTask)
-    this.taskForm.reset()
-    this.visible = false
+    this.taskService.addTask(newTask).subscribe({
+      next: () => {
+        this.update.emit()
+      },
+      complete: () => {
+        this.taskForm.reset()
+        this.visible = false
+      },
+    })
   }
 }

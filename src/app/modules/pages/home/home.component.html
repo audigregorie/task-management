@@ -1,4 +1,6 @@
 <div class="h-full w-[calc(100vw-18rem)]">
-  <app-manage-tasks />
-  <app-task-list />
+  <app-manage-tasks (update)="updateTasks()"></app-manage-tasks>
+  <ng-container *ngIf="tasks$ | async as tasks">
+    <app-task-list (update)="updateTasks()" [tasks]="tasks"></app-task-list>
+  </ng-container>
 </div>

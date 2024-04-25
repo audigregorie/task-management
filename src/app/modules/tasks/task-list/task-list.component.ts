@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { TaskService } from '../../../shared/services/task.service'
 import { Task } from '../../../shared/types/task.type'
-import { Observable } from 'rxjs'
+import { Status } from '../../../shared/types/status.enum'
 
 @Component({
   selector: 'app-task-list',
@@ -9,61 +9,38 @@ import { Observable } from 'rxjs'
   styleUrl: './task-list.component.scss',
 })
 export class TaskListComponent implements OnInit {
+  public rawTasks: Task[] = []
+  @Input() public tasks: Task[] = []
+  @Output() public update: EventEmitter<void> = new EventEmitter()
+
   public currentDate: string = new Date().toISOString().split('T')[0]
   public openDropdownId: string | null = null
-  // FIX: Null operator
-  public task!: Task
-  public taskList: Task[] = []
-  // FIX: Null operator
-  public tasks$!: Observable<Task[]>
-  public totalTaskCount: number | null = null
+  public taskStatuses = Status
+  public totalTaskCount!: number
 
   constructor(private taskService: TaskService) {}
 
   ngOnInit() {
-    this.subscribeNewTaskSubject()
-    this.loadTasks()
+    this.updateTaskCount()
+    this.rawTasks = JSON.parse(JSON.stringify(this.tasks))
   }
 
-  // Get all tasks from database and assign the variable array to the observable array.
-  public loadTasks() {
-    this.tasks$ = this.taskService.getTasks()
-    this.tasks$.subscribe({
-      next: (tasks: Task[]) => {
-        this.taskList = tasks
-        this.totalTaskCount = this.taskList.length
-      },
-    })
-  }
-
-  // Subscribe to the subject and pass the response to the add task service.
-  public subscribeNewTaskSubject() {
-    this.taskService.newTaskSubject.subscribe({
-      next: (newTask: Task) => {
-        this.taskService.addTask(newTask).subscribe({
-          next: () => {
-            this.loadTasks()
-          },
-        })
-      },
-    })
+  // Update counter of total tasks
+  public updateTaskCount() {
+    this.totalTaskCount = this.tasks.length
   }
 
   // Cycle through task statuses if editing
   public cycleStatus(task: Task) {
-    const statuses = ['open', 'progress', 'complete']
-    const currentIndex = statuses.indexOf(task.status)
-    const nextIndex = (currentIndex + 1) % statuses.length
-    task.status = statuses[nextIndex]
+    const currentIndex = Object.values(Status).indexOf(task.status)
+    const statusValues = Object.values(Status)
+    const nextIndex = (currentIndex + 1) % statusValues.length
+    task.status = statusValues[nextIndex]
   }
 
   // Toggle dropdown by id
   public onToggleDropdownById(taskId: string) {
-    if (this.openDropdownId === taskId) {
-      this.openDropdownId = null
-    } else {
-      this.openDropdownId = taskId
-    }
+    this.openDropdownId = this.openDropdownId === taskId ? null : taskId
   }
 
   // Close dropdown after item selected
@@ -72,31 +49,53 @@ export class TaskListComponent implements OnInit {
   }
 
   // Delete task.
-  public onDeleteTask(taskId: string) {
+  public onDelete(taskId: string) {
     this.taskService.deleteTask(taskId).subscribe({
       next: () => {
-        this.openDropdownId = taskId
-        this.loadTasks()
+        this.closeDropdown()
+        this.tasks
+        this.update.emit()
       },
     })
   }
 
   // Set the isEditing property to true
-  public onEditTask(task: Task) {
+  public onEnableEditing(task: Task) {
     task.isEditing = true
   }
 
-  // A quicker way to edit a task
-  public onQuickEditTask(task: Task) {
-    task.isEditing = true
-  }
+  // Cancel editing
+  public onCancel(task: Task) {
+    const originalTask = this.rawTasks.find((t) => t.id === task.id) as Task
+    const index = this.tasks.findIndex((t) => t.id === task.id)
 
-  public onUpdateTask() {}
+    this.tasks[index] = {
+      ...this.tasks[index],
+      description: originalTask.description,
+      task: originalTask.task,
+      isEditing: false,
+    }
 
-  // Cancel all edits
-  public onCancelEditing(task: Task) {
     task.isEditing = false
     this.closeDropdown()
-    console.log('Escaped key pressed')
+  }
+
+  // FIX: Update task after editing
+  public onUpdate(task: Task, taskId: string) {
+    const editedTask = {
+      ...task,
+      task: task.task,
+      description: task.description,
+      isEditing: false,
+    }
+
+    this.taskService.updateTask(editedTask, taskId).subscribe({
+      next: () => {
+        task.isEditing = false
+        this.update.emit()
+        this.closeDropdown()
+        this.tasks
+      },
+    })
   }
 }
