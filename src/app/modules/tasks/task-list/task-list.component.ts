@@ -18,11 +18,17 @@ export class TaskListComponent implements OnInit {
   public taskStatuses = Status
   public totalTaskCount!: number
 
+  public selectedStatus: Status | undefined
+
   constructor(private taskService: TaskService) {}
 
   ngOnInit() {
     this.updateTaskCount()
     this.rawTasks = JSON.parse(JSON.stringify(this.tasks))
+
+    this.taskService.selectedStatus$.subscribe((status) => {
+      this.selectedStatus = status
+    })
   }
 
   // Update counter of total tasks

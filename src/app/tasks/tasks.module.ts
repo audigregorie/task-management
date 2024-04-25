@@ -9,26 +9,16 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { InputTextareaModule } from 'primeng/inputtextarea'
 
 import { DatePipe } from '@angular/common'
+import { FilterStatusPipe } from '../shared/pipes/filter-status.pipe'
 
-// Components
 import { ManageTasksComponent } from '../modules/tasks/manage-tasks/manage-tasks.component'
 import { TaskListComponent } from '../modules/tasks/task-list/task-list.component'
 import { AddTaskComponent } from '../modules/tasks/add-task/add-task.component'
 
 @NgModule({
-  declarations: [ManageTasksComponent, TaskListComponent, AddTaskComponent],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    TableModule,
-    DialogModule,
-    ButtonModule,
-    InputGroupModule,
-    InputGroupAddonModule,
-    InputTextareaModule,
-  ],
-  providers: [DatePipe],
+  declarations: [ManageTasksComponent, TaskListComponent, AddTaskComponent, FilterStatusPipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, DialogModule, ButtonModule, InputGroupModule, InputGroupAddonModule, InputTextareaModule],
+  providers: [DatePipe, FilterStatusPipe],
   exports: [ManageTasksComponent, TaskListComponent, AddTaskComponent],
 })
 export class TasksModule {}

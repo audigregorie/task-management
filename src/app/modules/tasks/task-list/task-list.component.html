@@ -11,7 +11,7 @@
     </thead>
     <tbody>
       <ng-container *ngIf="tasks">
-        <tr *ngFor="let task of tasks">
+        <tr *ngFor="let task of tasks | filterStatus: selectedStatus">
           <!-- Status -->
           <td (click)="cycleStatus(task)" class="flex basis-1/12 cursor-pointer items-start justify-center">
             <div *ngIf="task.status === taskStatuses.open" class="h-8 w-1 bg-red-500"></div>
