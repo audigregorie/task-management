@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Output } from '@angular/core'
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'
-import { TaskService } from '../../../shared/services/task.service'
-import { Task } from '../../../shared/types/task.type'
 import { DatePipe } from '@angular/common'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 import { Status } from '../../../shared/types/status.enum'
+import { Task } from '../../../shared/types/task.type'
+import { TaskService } from '../../../shared/services/task.service'
 
 @Component({
   selector: 'app-add-task',
@@ -11,9 +11,9 @@ import { Status } from '../../../shared/types/status.enum'
   styleUrl: './add-task.component.scss',
 })
 export class AddTaskComponent {
+  @Output() public update: EventEmitter<void> = new EventEmitter()
   public taskForm: FormGroup
   public visible: boolean = false
-  @Output() public update: EventEmitter<void> = new EventEmitter()
 
   // Initialize the form.
   constructor(
@@ -22,10 +22,10 @@ export class AddTaskComponent {
     private datePipe: DatePipe,
   ) {
     this.taskForm = this.formBuilder.group({
-      task: ['', [Validators.required]],
       description: [''],
-      status: [Status.open, [Validators.required]],
       dueDate: [''],
+      status: [Status.open, [Validators.required]],
+      task: ['', [Validators.required]],
     })
   }
 
@@ -36,19 +36,19 @@ export class AddTaskComponent {
 
   // Create a new task and send it to the subject variable. Reset and hide the form.
   public updateNewTaskSubject() {
-    const randomIdNumber = Math.floor(Math.random() * 1000000).toString()
+    const currentDate = new Date().toISOString()
     const dateCreated = this.datePipe.transform(new Date(), 'yyyy-MM-dd')
     const dueDate = this.taskForm.get('dueDate')?.value
-    const currentDate = new Date().toISOString()
+    const randomIdNumber = Math.floor(Math.random() * 1000000).toString()
 
     const newTask: Task = {
       ...this.taskForm.value,
-      isEditing: false,
-      isCompleted: false,
-      id: randomIdNumber,
+      currentDate: currentDate,
       dateCreated: dateCreated,
       dueDate: dueDate,
-      currentDate: currentDate,
+      id: randomIdNumber,
+      isCompleted: false,
+      isEditing: false,
     }
 
     this.taskService.addTask(newTask).subscribe({

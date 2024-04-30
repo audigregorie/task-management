@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { TaskService } from '../../../shared/services/task.service'
-import { Task } from '../../../shared/types/task.type'
 import { Status } from '../../../shared/types/status.enum'
+import { Task } from '../../../shared/types/task.type'
+import { TaskService } from '../../../shared/services/task.service'
 
 @Component({
   selector: 'app-task-list',
@@ -9,16 +9,14 @@ import { Status } from '../../../shared/types/status.enum'
   styleUrl: './task-list.component.scss',
 })
 export class TaskListComponent implements OnInit {
-  public rawTasks: Task[] = []
   @Input() public tasks: Task[] = []
   @Output() public update: EventEmitter<void> = new EventEmitter()
-
   public currentDate: string = new Date().toISOString().split('T')[0]
   public openDropdownId: string | null = null
+  public rawTasks: Task[] = []
+  public selectedStatus: Status | undefined
   public taskStatuses = Status
   public totalTaskCount!: number
-
-  public selectedStatus: Status | undefined
 
   constructor(private taskService: TaskService) {}
 
@@ -28,6 +26,10 @@ export class TaskListComponent implements OnInit {
 
     this.taskService.selectedStatus$.subscribe((status) => {
       this.selectedStatus = status
+    })
+
+    this.taskService.searchedTasks$.subscribe((tasks) => {
+      this.tasks = tasks
     })
   }
 
@@ -78,8 +80,8 @@ export class TaskListComponent implements OnInit {
     this.tasks[index] = {
       ...this.tasks[index],
       description: originalTask.description,
-      task: originalTask.task,
       isEditing: false,
+      task: originalTask.task,
     }
 
     task.isEditing = false
@@ -90,9 +92,9 @@ export class TaskListComponent implements OnInit {
   public onUpdate(task: Task, taskId: string) {
     const editedTask = {
       ...task,
-      task: task.task,
       description: task.description,
       isEditing: false,
+      task: task.task,
     }
 
     this.taskService.updateTask(editedTask, taskId).subscribe({

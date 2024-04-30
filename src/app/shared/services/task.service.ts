@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { Task } from '../types/task.type'
 import { environment } from '../../../environments/environment.development'
-import { BehaviorSubject, Observable, catchError, forkJoin, of, tap } from 'rxjs'
+import { BehaviorSubject, Observable, catchError, forkJoin, map, of, tap } from 'rxjs'
 import { Status } from '../types/status.enum'
 
 @Injectable({
@@ -10,20 +10,20 @@ import { Status } from '../types/status.enum'
 })
 export class TaskService {
   private tasks: Task[] = []
-  public openTasks: Task[] = []
-  public progressTasks: Task[] = []
-  public completedTasks: Task[] = []
   private tasks$: Observable<Task[]> | null = null
 
-  private selectedStatusSubject = new BehaviorSubject<Status | undefined>(undefined)
-  public selectedStatus$: Observable<Status | undefined>
-
-  public setSelectedStatus(status: Status | undefined) {
-    this.selectedStatusSubject.next(status)
+  // Searched Tasks Subject
+  private searchedTasksSubject = new BehaviorSubject<Task[]>([])
+  public searchedTasks$: Observable<Task[]> = this.searchedTasksSubject.asObservable()
+  public setSearchedTasks(tasks: Task[]) {
+    this.searchedTasksSubject.next(tasks)
   }
 
-  constructor(private http: HttpClient) {
-    this.selectedStatus$ = this.selectedStatusSubject.asObservable()
+  // Selected Status Subject
+  private selectedStatusSubject = new BehaviorSubject<Status | undefined>(undefined)
+  public selectedStatus$: Observable<Status | undefined> = this.selectedStatusSubject.asObservable()
+  public setSelectedStatus(status: Status | undefined) {
+    this.selectedStatusSubject.next(status)
   }
 
   // Log Error.
@@ -31,6 +31,19 @@ export class TaskService {
     console.error(error)
     return of(errorValue)
   }
+
+  constructor(private http: HttpClient) {}
+
+  // Get Tasks using BehaviorSubject.
+  // public getTasks(): Observable<Task[]> {
+  //   return this.http.get<Task[]>(environment.baseUrl).pipe(
+  //     map((tasks: Task[]) => {
+  //       this.taskSubject.next(tasks)
+  //       return tasks
+  //     }),
+  //     catchError((error) => this.logError(error, [])),
+  //   )
+  // }
 
   // Get Tasks.
   public getTasks(): Observable<Task[]> {

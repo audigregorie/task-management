@@ -13,7 +13,7 @@
       <ng-container *ngIf="tasks">
         <tr *ngFor="let task of tasks | filterStatus: selectedStatus">
           <!-- Status -->
-          <td (click)="cycleStatus(task)" class="flex basis-1/12 cursor-pointer items-start justify-center">
+          <td (click)="cycleStatus(task)" class="mt-1 flex basis-1/12 cursor-pointer items-start justify-center">
             <div *ngIf="task.status === taskStatuses.open" class="h-8 w-1 bg-red-500"></div>
             <div *ngIf="task.status === taskStatuses.progress" class="h-8 w-1 bg-violet-500"></div>
             <div *ngIf="task.status === taskStatuses.complete" class="h-8 w-1 bg-green-500"></div>

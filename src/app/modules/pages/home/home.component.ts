@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
+import { Observable } from 'rxjs'
 import { Task } from '../../../shared/types/task.type'
 import { TaskService } from '../../../shared/services/task.service'
-import { Observable } from 'rxjs'
 
 @Component({
   selector: 'app-home',
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs'
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  public tasks$: Observable<Task[]> | null = this.taskService.getTasks()
+  public tasks$: Observable<Task[]> = this.taskService.getTasks()
 
   constructor(private taskService: TaskService) {}
 
