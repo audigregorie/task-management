@@ -20,5 +20,9 @@
 .input:focus,
 .textarea:focus,
 .dropdown:focus {
-  @apply border border-blue-500 shadow-blue-500 outline-none;
+  @apply border-2 border-blue-500 shadow-blue-500 outline-none;
+}
+
+.error-message {
+  @apply text-sm text-red-500;
 }

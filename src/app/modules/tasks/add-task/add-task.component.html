@@ -10,13 +10,16 @@
       <!-- // Task -->
       <div class="form-group">
         <label class="label" for="task">Task:</label>
-        <input class="input" type="text" name="task" formControlName="task" />
+        <input class="input mb-2" type="text" name="task" placeholder="Task" formControlName="task" />
+        <span *ngIf="taskForm.get('task')?.invalid && taskForm.get('task')?.touched" class="error-message">*Task cannot
+          be empty.</span>
       </div>
 
       <!-- // Description -->
       <div class="form-group">
         <label class="label" for="description">Description:</label>
-        <textarea class="textarea" name="description" cols="10" rows="4" formControlName="description"></textarea>
+        <textarea class="textarea" name="description" cols="10" rows="4" placeholder="Description"
+          formControlName="description"></textarea>
       </div>
 
       <!-- // Dropdown -->
@@ -32,12 +35,15 @@
       <!-- Due Date -->
       <div class="form-group">
         <label class="label" for="due-date">Due Date:</label>
-        <input class="input" type="date" name="due-date" formControlName="dueDate" />
+        <input class="input mb-2" type="date" name="due-date" formControlName="dueDate" />
+        <span *ngIf="taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched" class="error-message">*A due
+          date must be chosen.</span>
       </div>
 
       <!-- // Button -->
       <div class="flex justify-end">
-        <p-button (click)="updateNewTaskSubject()" label="Post" class="button bg-blue-500 hover:bg-blue-600"></p-button>
+        <p-button [disabled]="!taskForm.valid" (click)="updateNewTaskSubject()" label="Post"
+          class="button bg-blue-500 hover:bg-blue-600"></p-button>
       </div>
     </form>
   </p-dialog>

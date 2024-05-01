@@ -28,8 +28,8 @@
             </ng-container>
 
             <ng-container *ngIf="task.isEditing">
-              <input (keyup.enter)="onUpdate(task, task.id)" type="text" name="task" [(ngModel)]="task.task"
-                class="input" />
+              <input (keyup.enter)="onUpdate(task, task.id)" (keydown.escape)="onCancel(task)" (blur)="onCancel(task)"
+                type="text" name="task" [(ngModel)]="task.task" class="input" />
               <textarea (keyup.enter)="onUpdate(task, task.id)" name="description" cols="10" rows="4"
                 [(ngModel)]="task.description" class="textarea"></textarea>
             </ng-container>
@@ -39,8 +39,16 @@
           <td class="flex basis-2/12 items-center justify-center">{{ task.dateCreated }}</td>
 
           <!-- Due Date -->
-          <td class="flex basis-2/12 items-center justify-center">
-            <p class="{{ currentDate > task.dueDate ? 'text-red-400' : '' }}">{{ task.dueDate }}</p>
+          <td (dblclick)="onEnableEditing(task)" class="flex basis-2/12 items-center justify-center">
+            <ng-container *ngIf="!task.isEditing">
+              <p *ngIf="task.status !== 'complete'" class="{{ currentDate > task.dueDate ? 'text-red-400' : '' }}">{{
+                task.dueDate }}</p>
+            </ng-container>
+
+            <ng-container *ngIf="task.isEditing">
+              <input (keyup.enter)="onUpdate(task, task.id)" (keydown.escape)="onCancel(task)" (blur)="onCancel(task)"
+                [(ngModel)]="task.dueDate" class="input" type="date" name="due-date" />
+            </ng-container>
           </td>
 
           <!-- More Options -->

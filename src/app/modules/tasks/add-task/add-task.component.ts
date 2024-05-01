@@ -23,7 +23,7 @@ export class AddTaskComponent {
   ) {
     this.taskForm = this.formBuilder.group({
       description: [''],
-      dueDate: [''],
+      dueDate: ['', [Validators.required]],
       status: [Status.open, [Validators.required]],
       task: ['', [Validators.required]],
     })
