@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnInit, inject } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { debounceTime, distinctUntilChanged, tap } from 'rxjs'
 import { Task } from '../../../shared/types/task.type'
@@ -10,10 +10,12 @@ import { TaskService } from '../../../shared/services/task.service'
   styleUrl: './search-tasks.component.scss',
 })
 export class SearchTasksComponent implements OnInit {
+  private taskService = inject(TaskService)
+
   @Input() public tasks: Task[] = []
   public form: FormGroup
 
-  constructor(private taskService: TaskService) {
+  constructor() {
     this.form = new FormGroup({
       search: new FormControl(''),
     })

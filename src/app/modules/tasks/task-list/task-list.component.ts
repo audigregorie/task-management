@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
 import { Status } from '../../../shared/types/status.enum'
 import { Task } from '../../../shared/types/task.type'
 import { TaskService } from '../../../shared/services/task.service'
@@ -9,8 +9,11 @@ import { TaskService } from '../../../shared/services/task.service'
   styleUrl: './task-list.component.scss',
 })
 export class TaskListComponent implements OnInit {
+  private taskService = inject(TaskService)
+
   @Input() public tasks: Task[] = []
   @Output() public update: EventEmitter<void> = new EventEmitter()
+
   public currentDate: string = new Date().toISOString().split('T')[0]
   public openDropdownId: string | null = null
   public rawTasks: Task[] = []
@@ -18,9 +21,9 @@ export class TaskListComponent implements OnInit {
   public taskStatuses = Status
   public totalTaskCount: number = 0
 
-  constructor(private taskService: TaskService) { }
+  constructor() { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.stringifyAndParseForRawTasks()
 
     // this.updateTaskCount()
@@ -124,8 +127,10 @@ export class TaskListComponent implements OnInit {
 
     this.taskService.updateTask(editedTask, taskId).subscribe({
       next: () => {
-        task.isEditing = false
         this.update.emit()
+      },
+      complete: () => {
+        task.isEditing = false
         this.closeDropdown()
         this.tasks
       },

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http'
-import { Injectable } from '@angular/core'
+import { Injectable, inject } from '@angular/core'
 import { Task } from '../types/task.type'
 import { environment } from '../../../environments/environment.development'
 import { BehaviorSubject, Observable, catchError, forkJoin, of, tap } from 'rxjs'
@@ -9,8 +9,11 @@ import { Status } from '../types/status.enum'
   providedIn: 'root',
 })
 export class TaskService {
-  private tasks: Task[] = []
+  private http = inject(HttpClient)
+
   private tasks$: Observable<Task[]> | null = null
+
+  private tasks: Task[] = []
 
   // Searched Tasks Subject.
   private searchedTasksSubject = new BehaviorSubject<Task[]>([])
@@ -39,7 +42,7 @@ export class TaskService {
     return of(errorValue)
   }
 
-  constructor(private http: HttpClient) { }
+  constructor() { }
 
   // Get Tasks using BehaviorSubject.
   // public getTasks(): Observable<Task[]> {

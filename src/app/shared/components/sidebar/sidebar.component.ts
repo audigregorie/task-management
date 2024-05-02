@@ -1,7 +1,7 @@
-import { Component } from '@angular/core'
+import { Component, inject } from '@angular/core'
 import { Status } from '../../types/status.enum'
 import { TaskService } from '../../services/task.service'
-import { Observable } from 'rxjs'
+import { Observable, Subject, takeUntil } from 'rxjs'
 import { Task } from '../../types/task.type'
 
 @Component({
@@ -10,14 +10,24 @@ import { Task } from '../../types/task.type'
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
-  public selectedStatus: Status | undefined = undefined
+  private taskService = inject(TaskService)
+
+  private destroy$ = new Subject<void>()
   public tasks$: Observable<Task[]> = this.taskService.getTasks()
+
+  public selectedStatus: Status | undefined = undefined
   public tasks: Task[] = []
 
-  constructor(private taskService: TaskService) { }
+  constructor() { }
 
-  ngOnInit() {
-    this.tasks$.subscribe((tasks) => (this.tasks = tasks))
+  // Subscribe to tasks and set tasks.
+  ngOnInit(): void {
+    this.tasks$.pipe(takeUntil(this.destroy$)).subscribe((tasks) => (this.tasks = tasks))
+  }
+
+  // Ensure the subscription is destroyed.
+  ngOnDestroy(): void {
+    this.destroy$.next()
   }
 
   // Filter tasks by status.
