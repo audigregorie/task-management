@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core'
 import { DatePipe } from '@angular/common'
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { Status } from '../../../shared/types/status.enum'
 import { Task } from '../../../shared/types/task.type'
 import { TaskService } from '../../../shared/services/task.service'
@@ -17,15 +17,15 @@ export class AddTaskComponent {
 
   // Initialize the form.
   constructor(
-    private formBuilder: FormBuilder,
+    // private formBuilder: FormBuilder,
     private taskService: TaskService,
     private datePipe: DatePipe,
   ) {
-    this.taskForm = this.formBuilder.group({
-      description: [''],
-      dueDate: ['', [Validators.required]],
-      status: [Status.open, [Validators.required]],
-      task: ['', [Validators.required]],
+    this.taskForm = new FormGroup({
+      description: new FormControl(''),
+      dueDate: new FormControl('', [Validators.required]),
+      status: new FormControl(Status.open, [Validators.required]),
+      task: new FormControl('', [Validators.required]),
     })
   }
 

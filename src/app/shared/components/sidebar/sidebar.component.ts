@@ -1,6 +1,8 @@
 import { Component } from '@angular/core'
 import { Status } from '../../types/status.enum'
 import { TaskService } from '../../services/task.service'
+import { Observable } from 'rxjs'
+import { Task } from '../../types/task.type'
 
 @Component({
   selector: 'app-sidebar',
@@ -8,31 +10,50 @@ import { TaskService } from '../../services/task.service'
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
-  public selectedStatus: Status | undefined
+  public selectedStatus: Status | undefined = undefined
+  public tasks$: Observable<Task[]> = this.taskService.getTasks()
+  public tasks: Task[] = []
 
-  constructor(private taskService: TaskService) {}
+  constructor(private taskService: TaskService) { }
 
-  // Show All Tasks
+  ngOnInit() {
+    this.tasks$.subscribe((tasks) => (this.tasks = tasks))
+  }
+
+  // Filter tasks by status.
+  public getFilteredTasks(selectedStatus?: Status): Task[] {
+    return selectedStatus ? this.tasks.filter((task) => task.status === selectedStatus) : this.tasks
+  }
+
+  // Get the length of the filtered tasks.
+  public getFilteredTaskCount(selectedStatus?: Status): number {
+    return this.getFilteredTasks(selectedStatus).length
+  }
+
+  // Update the status and filtered task count.
+  public updateSelectedStatusAndCount(selectedStatus?: Status) {
+    this.selectedStatus = selectedStatus
+    this.taskService.setSelectedStatus(selectedStatus)
+    this.taskService.setFilteredStatusCount(this.getFilteredTaskCount(selectedStatus))
+  }
+
+  // Show all tasks.
   public showAllTasks() {
-    this.selectedStatus = undefined
-    this.taskService.setSelectedStatus(undefined)
+    this.updateSelectedStatusAndCount(undefined)
   }
 
-  // Show Open Tasks
+  // Show open tasks.
   public showOpenTasks() {
-    this.selectedStatus = Status.open
-    this.taskService.setSelectedStatus(Status.open)
+    this.updateSelectedStatusAndCount(Status.open)
   }
 
-  // Show In Progress Tasks
+  // Show progress tasks.
   public showProgressTasks() {
-    this.selectedStatus = Status.progress
-    this.taskService.setSelectedStatus(Status.progress)
+    this.updateSelectedStatusAndCount(Status.progress)
   }
 
-  // Show Completed Tasks
+  // Show completed tasks.
   public showCompletedTasks() {
-    this.selectedStatus = Status.complete
-    this.taskService.setSelectedStatus(Status.complete)
+    this.updateSelectedStatusAndCount(Status.complete)
   }
 }

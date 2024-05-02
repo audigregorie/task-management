@@ -11,11 +11,11 @@ import { TaskService } from '../../../shared/services/task.service'
 })
 export class SearchTasksComponent implements OnInit {
   @Input() public tasks: Task[] = []
-  public searchForm: FormGroup
+  public form: FormGroup
 
   constructor(private taskService: TaskService) {
-    this.searchForm = new FormGroup({
-      searchTerm: new FormControl(''),
+    this.form = new FormGroup({
+      search: new FormControl(''),
     })
   }
 
@@ -24,10 +24,10 @@ export class SearchTasksComponent implements OnInit {
       this.taskService.setSearchedTasks(tasks)
     })
 
-    this.searchForm
-      .get('searchTerm')
+    this.form
+      .get('search')
       ?.valueChanges.pipe(
-        debounceTime(300),
+        debounceTime(500),
         distinctUntilChanged(),
         tap((searchTerm) => {
           if (searchTerm) {

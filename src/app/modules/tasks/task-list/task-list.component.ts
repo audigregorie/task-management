@@ -16,29 +16,54 @@ export class TaskListComponent implements OnInit {
   public rawTasks: Task[] = []
   public selectedStatus: Status | undefined
   public taskStatuses = Status
-  public totalTaskCount!: number
+  public totalTaskCount: number = 0
 
-  constructor(private taskService: TaskService) {}
+  constructor(private taskService: TaskService) { }
 
   ngOnInit() {
-    this.updateTaskCount()
-    this.rawTasks = JSON.parse(JSON.stringify(this.tasks))
+    this.stringifyAndParseForRawTasks()
 
+    // this.updateTaskCount()
+
+    this.updateSelectedStatus()
+
+    this.updateFilteredStatusCount()
+
+    this.updateSearchedTasks()
+  }
+
+  // Create an unmodified raw Tasks array.
+  public stringifyAndParseForRawTasks() {
+    this.rawTasks = JSON.parse(JSON.stringify(this.tasks))
+  }
+
+  // Update counter of total tasks
+  // public updateTaskCount() {
+  //   this.totalTaskCount = this.tasks.length
+  // }
+
+  // Update through the selected status.
+  public updateSelectedStatus() {
     this.taskService.selectedStatus$.subscribe((status) => {
       this.selectedStatus = status
     })
+  }
 
+  // Update the count of tasks filtered by selected status.
+  public updateFilteredStatusCount() {
+    this.taskService.filteredStatusCount$.subscribe((count) => {
+      this.totalTaskCount = count
+    })
+  }
+
+  // Update by searched tasks.
+  public updateSearchedTasks() {
     this.taskService.searchedTasks$.subscribe((tasks) => {
       this.tasks = tasks
     })
   }
 
-  // Update counter of total tasks
-  public updateTaskCount() {
-    this.totalTaskCount = this.tasks.length
-  }
-
-  // Cycle through task statuses if editing
+  // Cycle through task statuses if editing.
   public cycleStatus(task: Task) {
     const currentIndex = Object.values(Status).indexOf(task.status)
     const statusValues = Object.values(Status)
@@ -46,12 +71,12 @@ export class TaskListComponent implements OnInit {
     task.status = statusValues[nextIndex]
   }
 
-  // Toggle dropdown by id
+  // Toggle dropdown by id.
   public onToggleDropdownById(taskId: string) {
     this.openDropdownId = this.openDropdownId === taskId ? null : taskId
   }
 
-  // Close dropdown after item selected
+  // Close dropdown after item selected.
   public closeDropdown() {
     this.openDropdownId = null
   }
@@ -67,12 +92,12 @@ export class TaskListComponent implements OnInit {
     })
   }
 
-  // Set the isEditing property to true
+  // Set the isEditing property to true.
   public onEnableEditing(task: Task) {
     task.isEditing = true
   }
 
-  // Cancel editing
+  // Cancel editing.
   public onCancel(task: Task) {
     const originalTask = this.rawTasks.find((t) => t.id === task.id) as Task
     const index = this.tasks.findIndex((t) => t.id === task.id)
@@ -88,7 +113,7 @@ export class TaskListComponent implements OnInit {
     this.closeDropdown()
   }
 
-  // FIX: Update task after editing
+  // FIX: Update task after editing.
   public onUpdate(task: Task, taskId: string) {
     const editedTask = {
       ...task,

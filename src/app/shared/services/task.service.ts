@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { Task } from '../types/task.type'
 import { environment } from '../../../environments/environment.development'
-import { BehaviorSubject, Observable, catchError, forkJoin, map, of, tap } from 'rxjs'
+import { BehaviorSubject, Observable, catchError, forkJoin, of, tap } from 'rxjs'
 import { Status } from '../types/status.enum'
 
 @Injectable({
@@ -12,18 +12,25 @@ export class TaskService {
   private tasks: Task[] = []
   private tasks$: Observable<Task[]> | null = null
 
-  // Searched Tasks Subject
+  // Searched Tasks Subject.
   private searchedTasksSubject = new BehaviorSubject<Task[]>([])
   public searchedTasks$: Observable<Task[]> = this.searchedTasksSubject.asObservable()
   public setSearchedTasks(tasks: Task[]) {
     this.searchedTasksSubject.next(tasks)
   }
 
-  // Selected Status Subject
+  // Selected Status Subject.
   private selectedStatusSubject = new BehaviorSubject<Status | undefined>(undefined)
   public selectedStatus$: Observable<Status | undefined> = this.selectedStatusSubject.asObservable()
   public setSelectedStatus(status: Status | undefined) {
     this.selectedStatusSubject.next(status)
+  }
+
+  // Filtered Status Count.
+  private filteredStatusCountSubject = new BehaviorSubject<number>(0)
+  public filteredStatusCount$: Observable<any> = this.filteredStatusCountSubject.asObservable()
+  public setFilteredStatusCount(count: number) {
+    this.filteredStatusCountSubject.next(count)
   }
 
   // Log Error.
@@ -32,7 +39,7 @@ export class TaskService {
     return of(errorValue)
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Get Tasks using BehaviorSubject.
   // public getTasks(): Observable<Task[]> {

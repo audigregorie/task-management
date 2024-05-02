@@ -3,8 +3,8 @@
     {
       "id": "562813",
       "task": "Angular",
-      "description": "This is the description of Angular.",
-      "status": "open",
+      "description": "This is the description of Angular.\n",
+      "status": "progress",
       "dueDate": "2024-04-30",
       "isEditing": false,
       "isCompleted": false,
@@ -32,6 +32,39 @@
       "isCompleted": false,
       "dateCreated": "2024-04-25",
       "currentDate": "2024-04-25T02:45:25.645Z"
+    },
+    {
+      "id": "684264",
+      "description": "This is the description of Html.",
+      "dueDate": "2024-05-01",
+      "status": "complete",
+      "task": "Html",
+      "currentDate": "2024-05-02T01:27:04.939Z",
+      "dateCreated": "2024-05-02",
+      "isCompleted": false,
+      "isEditing": false
+    },
+    {
+      "id": "286530",
+      "description": "This is the description of SCSS.\n",
+      "dueDate": "2024-05-01",
+      "status": "complete",
+      "task": "SCSS",
+      "currentDate": "2024-05-02T01:27:47.240Z",
+      "dateCreated": "2024-05-02",
+      "isCompleted": false,
+      "isEditing": false
+    },
+    {
+      "id": "421042",
+      "description": "This is the description of Tailwind.",
+      "dueDate": "2024-05-01",
+      "status": "complete",
+      "task": "Tailwind",
+      "currentDate": "2024-05-02T01:56:26.352Z",
+      "dateCreated": "2024-05-02",
+      "isCompleted": false,
+      "isEditing": false
     }
   ]
 }
