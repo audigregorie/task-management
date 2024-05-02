@@ -58,7 +58,7 @@
 
             <!-- Dropdown Menu -->
             <div *ngIf="openDropdownId === task.id"
-              class="absolute left-10 top-16 z-[10] mt-2 w-48 rounded border bg-white shadow-lg">
+              class="absolute left-7 top-16 z-[10] mt-2 w-48 rounded border bg-white shadow-lg">
               <button (click)="!task.isEditing ? onEnableEditing(task) : onUpdate(task, task.id)"
                 class="flex w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-200">
                 {{ !task.isEditing ? 'Edit' : 'Update' }}
