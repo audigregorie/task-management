@@ -1,32 +1,33 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core'
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core'
 import { Status } from '../../../shared/types/status.enum'
 import { Task } from '../../../shared/types/task.type'
 import { TaskService } from '../../../shared/services/task.service'
+import { Subject, startWith, takeUntil } from 'rxjs'
 
 @Component({
   selector: 'app-task-list',
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss',
 })
-export class TaskListComponent implements OnInit {
+export class TaskListComponent implements OnInit, OnDestroy {
   private taskService = inject(TaskService)
 
   @Input() public tasks: Task[] = []
   @Output() public update: EventEmitter<void> = new EventEmitter()
+
+  private destroy$ = new Subject<void>()
 
   public currentDate: string = new Date().toISOString().split('T')[0]
   public openDropdownId: string | null = null
   public rawTasks: Task[] = []
   public selectedStatus: Status | undefined
   public taskStatuses = Status
-  public totalTaskCount: number = 0
+  public totalTaskCount: number = this.tasks.length
 
   constructor() { }
 
   ngOnInit(): void {
     this.stringifyAndParseForRawTasks()
-
-    // this.updateTaskCount()
 
     this.updateSelectedStatus()
 
@@ -35,34 +36,34 @@ export class TaskListComponent implements OnInit {
     this.updateSearchedTasks()
   }
 
+  // Ensure the subscription is destroyed.
+  ngOnDestroy(): void {
+    this.destroy$.next()
+  }
+
   // Create an unmodified raw Tasks array.
   public stringifyAndParseForRawTasks() {
     this.rawTasks = JSON.parse(JSON.stringify(this.tasks))
   }
 
-  // Update counter of total tasks
-  // public updateTaskCount() {
-  //   this.totalTaskCount = this.tasks.length
-  // }
-
   // Update through the selected status.
   public updateSelectedStatus() {
-    this.taskService.selectedStatus$.subscribe((status) => {
+    this.taskService.selectedStatus$.pipe(takeUntil(this.destroy$)).subscribe((status) => {
       this.selectedStatus = status
     })
   }
 
   // Update the count of tasks filtered by selected status.
   public updateFilteredStatusCount() {
-    this.taskService.filteredStatusCount$.subscribe((count) => {
-      this.totalTaskCount = count
+    this.taskService.filteredStatusCount$.pipe(takeUntil(this.destroy$)).subscribe((count) => {
+      count ? (this.totalTaskCount = count) : (this.totalTaskCount = this.tasks.length)
     })
   }
 
   // Update by searched tasks.
   public updateSearchedTasks() {
-    this.taskService.searchedTasks$.subscribe((tasks) => {
-      this.tasks = tasks
+    this.taskService.searchedTasks$.pipe(takeUntil(this.destroy$)).subscribe((searchedTasks) => {
+      this.tasks = searchedTasks
     })
   }
 

@@ -1,11 +1,9 @@
 <div class="flex h-16 w-full items-center justify-between px-12">
-  <!-- <div></div> -->
   <div class="">
     <app-search-tasks [tasks]="tasks"></app-search-tasks>
   </div>
   <div class="flex gap-4">
     <app-add-task (update)="updateTasks()"></app-add-task>
-    <button (click)="onClearTasks()" class="rounded bg-red-500 px-6 py-2 font-bold text-white hover:bg-red-600">Clear
-      All</button>
+    <button (click)="onClearTasks()" class="rounded bg-red-500 px-6 py-2 font-bold text-white hover:bg-red-600">Clear All</button>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core'
+import { Component, OnInit, inject } from '@angular/core'
 import { Status } from '../../types/status.enum'
 import { TaskService } from '../../services/task.service'
 import { Observable, Subject, takeUntil } from 'rxjs'
@@ -9,7 +9,7 @@ import { Task } from '../../types/task.type'
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   private taskService = inject(TaskService)
 
   private destroy$ = new Subject<void>()
@@ -62,7 +62,6 @@ export class SidebarComponent {
     this.updateSelectedStatusAndCount(Status.progress)
   }
 
-  // Show completed tasks.
   public showCompletedTasks() {
     this.updateSelectedStatusAndCount(Status.complete)
   }

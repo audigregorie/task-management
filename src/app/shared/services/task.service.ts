@@ -30,7 +30,8 @@ export class TaskService {
   }
 
   // Filtered Status Count.
-  private filteredStatusCountSubject = new BehaviorSubject<number>(0)
+  // private filteredStatusCountSubject = new BehaviorSubject<number>(0)
+  private filteredStatusCountSubject = new BehaviorSubject<number>(this.tasks.length)
   public filteredStatusCount$: Observable<any> = this.filteredStatusCountSubject.asObservable()
   public setFilteredStatusCount(count: number) {
     this.filteredStatusCountSubject.next(count)
@@ -43,17 +44,6 @@ export class TaskService {
   }
 
   constructor() { }
-
-  // Get Tasks using BehaviorSubject.
-  // public getTasks(): Observable<Task[]> {
-  //   return this.http.get<Task[]>(environment.baseUrl).pipe(
-  //     map((tasks: Task[]) => {
-  //       this.taskSubject.next(tasks)
-  //       return tasks
-  //     }),
-  //     catchError((error) => this.logError(error, [])),
-  //   )
-  // }
 
   // Get Tasks.
   public getTasks(): Observable<Task[]> {
@@ -78,7 +68,7 @@ export class TaskService {
   }
 
   // Delete all tasks.
-  public deleteAllTasks() {
+  public deleteAllTasks(): Observable<Task[]> {
     return forkJoin(
       this.tasks.map((task) => {
         return this.deleteTask(task.id)
