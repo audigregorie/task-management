@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, inject } from '@angular/core'
 import { Status } from '../../../shared/types/status.enum'
+import { Subject, map, takeUntil, tap } from 'rxjs'
 import { Task } from '../../../shared/types/task.type'
 import { TaskService } from '../../../shared/services/task.service'
-import { Subject, startWith, takeUntil } from 'rxjs'
+import { TaskSharedService } from '../../../shared/services/task-shared.service'
 
 @Component({
   selector: 'app-task-list',
@@ -11,34 +12,37 @@ import { Subject, startWith, takeUntil } from 'rxjs'
 })
 export class TaskListComponent implements OnInit, OnDestroy {
   private taskService = inject(TaskService)
+  private taskSharedService = inject(TaskSharedService)
 
   @Input() public tasks: Task[] = []
   @Output() public update: EventEmitter<void> = new EventEmitter()
-
   private destroy$ = new Subject<void>()
-
   public currentDate: string = new Date().toISOString().split('T')[0]
   public openDropdownId: string | null = null
   public rawTasks: Task[] = []
-  public selectedStatus: Status | undefined
+  public selectStatus: Status | undefined
   public taskStatuses = Status
   public totalTaskCount: number = this.tasks.length
 
   constructor() { }
 
   ngOnInit(): void {
+    this.fetchTasks()
+    this.getTotalTaskCount()
     this.stringifyAndParseForRawTasks()
-
-    this.updateSelectedStatus()
-
-    this.updateFilteredStatusCount()
-
-    this.updateSearchedTasks()
+    this.updateSelectStatus()
+    this.updateFilterStatusCount()
+    this.updateSearchTasks()
   }
 
   // Ensure the subscription is destroyed.
   ngOnDestroy(): void {
-    this.destroy$.next()
+    this.destroy$.complete()
+  }
+
+  // Fetch tasks from the service pulling from the server.
+  public fetchTasks() {
+    this.taskService.fetchTasks()
   }
 
   // Create an unmodified raw Tasks array.
@@ -47,32 +51,23 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   // Update through the selected status.
-  public updateSelectedStatus() {
-    this.taskService.selectedStatus$.pipe(takeUntil(this.destroy$)).subscribe((status) => {
-      this.selectedStatus = status
-    })
+  public updateSelectStatus() {
+    this.taskSharedService.selectStatus$.pipe(takeUntil(this.destroy$), map((status) => (this.selectStatus = status))).subscribe()
   }
 
   // Update the count of tasks filtered by selected status.
-  public updateFilteredStatusCount() {
-    this.taskService.filteredStatusCount$.pipe(takeUntil(this.destroy$)).subscribe((count) => {
-      count ? (this.totalTaskCount = count) : (this.totalTaskCount = this.tasks.length)
-    })
+  public updateFilterStatusCount() {
+    this.taskSharedService.filterStatusCount$.pipe(takeUntil(this.destroy$), map((count) => (count ? (this.totalTaskCount = count) : this.getTotalTaskCount()))).subscribe()
   }
 
   // Update by searched tasks.
-  public updateSearchedTasks() {
-    this.taskService.searchedTasks$.pipe(takeUntil(this.destroy$)).subscribe((searchedTasks) => {
-      this.tasks = searchedTasks
-    })
+  public updateSearchTasks() {
+    this.taskSharedService.searchTasks$.pipe(takeUntil(this.destroy$), map((searchedTasks) => (this.tasks = searchedTasks))).subscribe()
   }
 
-  // Cycle through task statuses if editing.
-  public cycleStatus(task: Task) {
-    const currentIndex = Object.values(Status).indexOf(task.status)
-    const statusValues = Object.values(Status)
-    const nextIndex = (currentIndex + 1) % statusValues.length
-    task.status = statusValues[nextIndex]
+  // Get number of tasks from the service pulling from the server.
+  public getTotalTaskCount() {
+    this.taskService.tasks$.pipe(takeUntil(this.destroy$), map((tasks) => this.totalTaskCount = tasks.length)).subscribe()
   }
 
   // Toggle dropdown by id.
@@ -80,25 +75,32 @@ export class TaskListComponent implements OnInit, OnDestroy {
     this.openDropdownId = this.openDropdownId === taskId ? null : taskId
   }
 
+  // Set the isEditing property to true.
+  public onToggleEditing(task: Task) {
+    task.isEditing = !task.isEditing
+  }
+
   // Close dropdown after item selected.
   public closeDropdown() {
     this.openDropdownId = null
   }
 
-  // Delete task.
-  public onDelete(taskId: string) {
-    this.taskService.deleteTask(taskId).subscribe({
-      next: () => {
-        this.closeDropdown()
-        this.tasks
-        this.update.emit()
-      },
-    })
+  public closeDropdownAndEmit() {
+    this.update.emit()
+    this.closeDropdown()
   }
 
-  // Set the isEditing property to true.
-  public onEnableEditing(task: Task) {
-    task.isEditing = true
+  // Cycle through task statuses if editing.
+  public cycleStatus(task: Task) {
+    const statusValues = Object.values(Status)
+    const currentIndex = statusValues.indexOf(task.status)
+    const nextIndex = (currentIndex + 1) % statusValues.length
+    task.status = statusValues[nextIndex]
+  }
+
+  // Delete task.
+  public onDelete(taskId: string) {
+    this.taskService.deleteTask(taskId).pipe(takeUntil(this.destroy$), tap(() => this.closeDropdownAndEmit())).subscribe()
   }
 
   // Cancel editing.
@@ -113,28 +115,23 @@ export class TaskListComponent implements OnInit, OnDestroy {
       task: originalTask.task,
     }
 
-    task.isEditing = false
     this.closeDropdown()
   }
 
-  // FIX: Update task after editing.
+  // Update task after editing.
   public onUpdate(task: Task, taskId: string) {
-    const editedTask = {
-      ...task,
-      description: task.description,
-      isEditing: false,
-      task: task.task,
-    }
-
-    this.taskService.updateTask(editedTask, taskId).subscribe({
-      next: () => {
-        this.update.emit()
-      },
-      complete: () => {
-        task.isEditing = false
-        this.closeDropdown()
-        this.tasks
-      },
-    })
+    const editedTask = { ...task, isEditing: false }
+    this.taskService.updateTask(editedTask, taskId).pipe(takeUntil(this.destroy$), tap(() => this.closeDropdownAndEmit())).subscribe()
   }
+
+  // Mange dropdown option whether to update or edit.
+  public onManageProceed(task: Task) {
+    task.isEditing ? this.onUpdate(task, task.id) : this.onToggleEditing(task)
+  }
+
+  // Mange dropdown option whether to cancel or delete.
+  public onManageRevert(task: Task) {
+    task.isEditing ? this.onCancel(task) : this.onDelete(task.id)
+  }
+
 }

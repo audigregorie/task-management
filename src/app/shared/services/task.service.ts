@@ -2,8 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
 import { Task } from '../types/task.type'
 import { environment } from '../../../environments/environment.development'
-import { BehaviorSubject, Observable, catchError, forkJoin, of, tap } from 'rxjs'
-import { Status } from '../types/status.enum'
+import { BehaviorSubject, Observable, catchError, forkJoin, map, of, shareReplay, switchMap, throwError } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
@@ -11,73 +10,77 @@ import { Status } from '../types/status.enum'
 export class TaskService {
   private http = inject(HttpClient)
 
-  private tasks$: Observable<Task[]> | null = null
-
-  private tasks: Task[] = []
-
-  // Searched Tasks Subject.
-  private searchedTasksSubject = new BehaviorSubject<Task[]>([])
-  public searchedTasks$: Observable<Task[]> = this.searchedTasksSubject.asObservable()
-  public setSearchedTasks(tasks: Task[]) {
-    this.searchedTasksSubject.next(tasks)
-  }
-
-  // Selected Status Subject.
-  private selectedStatusSubject = new BehaviorSubject<Status | undefined>(undefined)
-  public selectedStatus$: Observable<Status | undefined> = this.selectedStatusSubject.asObservable()
-  public setSelectedStatus(status: Status | undefined) {
-    this.selectedStatusSubject.next(status)
-  }
-
-  // Filtered Status Count.
-  // private filteredStatusCountSubject = new BehaviorSubject<number>(0)
-  private filteredStatusCountSubject = new BehaviorSubject<number>(this.tasks.length)
-  public filteredStatusCount$: Observable<any> = this.filteredStatusCountSubject.asObservable()
-  public setFilteredStatusCount(count: number) {
-    this.filteredStatusCountSubject.next(count)
-  }
-
-  // Log Error.
-  private logError(error: Error, errorValue: any) {
-    console.error(error)
-    return of(errorValue)
-  }
+  private readonly taskSub = new BehaviorSubject<Task[]>([])
+  public tasks$: Observable<Task[]> = this.taskSub.asObservable().pipe(shareReplay(1))
 
   constructor() { }
 
-  // Get Tasks.
-  public getTasks(): Observable<Task[]> {
-    this.tasks$ = this.http.get<Task[]>(environment.baseUrl).pipe(
-      tap((tasks) => {
-        this.tasks = tasks
+  // Fetch tasks.
+  public fetchTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(environment.baseUrl).pipe(map((tasks) => {
+      this.taskSub.next(tasks)
+      return tasks
+    }),
+
+      catchError((error) => {
+        console.error('Error fetching employees:', error)
+        return of([])
       }),
-      catchError((error) => this.logError(error, [])),
     )
-    return this.tasks$
   }
 
   // Add Task.
   public addTask(task: Task): Observable<Task> {
-    return this.http.post<Task>(environment.baseUrl, task)
+    return this.http.post<Task>(environment.baseUrl, task).pipe(map((newTask) => {
+      this.taskSub.next([...this.taskSub.getValue(), newTask])
+      return newTask
+    }),
+
+      catchError((error) => {
+        let errorMessage = 'Failed to add task'
+        console.error('Error adding task:', error)
+        return throwError(() => new Error(errorMessage))
+      }),
+    )
   }
 
-  // Delete Task.
-  public deleteTask(taskId: string): Observable<Task> {
+  // Delete task.
+  public deleteTask(taskId: string): Observable<void> {
     const url = `${environment.baseUrl}/${taskId}`
-    return this.http.delete<Task>(url)
+
+    return this.http.delete<void>(url).pipe(
+      catchError((error) => {
+        let errorMessage = 'Failed to delete employee'
+        console.error('Error deleting employee:', error)
+        return throwError(() => new Error(errorMessage))
+      }),
+    )
   }
 
   // Delete all tasks.
-  public deleteAllTasks(): Observable<Task[]> {
-    return forkJoin(
-      this.tasks.map((task) => {
-        return this.deleteTask(task.id)
-      }),
+  public deleteAllTasks(): Observable<any> {
+    return this.tasks$.pipe(switchMap((tasks) => {
+      return forkJoin(tasks.map((task) => this.deleteTask(task.id))).pipe(
+        catchError((error) => {
+          let errorMessage = 'Failed to delete all tasks'
+          console.error('Error deleting all tasks:', error)
+          return throwError(() => new Error(errorMessage))
+        }),
+      )
+    }),
     )
   }
 
   // Update Task.
   public updateTask(task: Task, taskId: string): Observable<Task> {
-    return this.http.put<Task>(`${environment.baseUrl}/${taskId}`, task)
+    const url = `${environment.baseUrl}/${taskId}`
+
+    return this.http.put<Task>(url, task).pipe(
+      catchError((error) => {
+        let errorMessage = 'Failed to update task'
+        console.error('Error updating task:', error)
+        return throwError(() => new Error(errorMessage))
+      }),
+    )
   }
 }

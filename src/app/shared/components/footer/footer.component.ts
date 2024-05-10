@@ -5,6 +5,4 @@ import { Component } from '@angular/core'
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
 })
-export class FooterComponent {
-  public date: Date = new Date()
-}
+export class FooterComponent {}

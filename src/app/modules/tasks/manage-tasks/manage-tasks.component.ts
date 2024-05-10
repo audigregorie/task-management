@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { Task } from '../../../shared/types/task.type'
 import { TaskService } from '../../../shared/services/task.service'
+import { Subject, takeUntil, tap } from 'rxjs'
 
 @Component({
   selector: 'app-manage-tasks',
@@ -10,6 +11,7 @@ import { TaskService } from '../../../shared/services/task.service'
 export class ManageTasksComponent {
   private taskService = inject(TaskService)
 
+  private destroy$ = new Subject<void>()
   @Input() public tasks: Task[] = []
   @Output() public update: EventEmitter<void> = new EventEmitter()
 
@@ -21,11 +23,8 @@ export class ManageTasksComponent {
   }
 
   // Clear all tasks
-  public onClearTasks() {
-    this.taskService.deleteAllTasks().subscribe({
-      next: () => {
-        this.update.emit()
-      },
-    })
+  public onClearAllTasks() {
+    this.taskService.deleteAllTasks().pipe(takeUntil(this.destroy$), tap(() => this.update.emit())).subscribe()
   }
+
 }

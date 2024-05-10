@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { InputGroupModule } from 'primeng/inputgroup'
 import { InputTextareaModule } from 'primeng/inputtextarea'
+import { InputTextModule } from 'primeng/inputtext'
 import { NgModule } from '@angular/core'
 import { TableModule } from 'primeng/table'
 
@@ -20,7 +21,7 @@ import { TaskListComponent } from '../modules/tasks/task-list/task-list.componen
 
 @NgModule({
   declarations: [ManageTasksComponent, TaskListComponent, AddTaskComponent, SearchTasksComponent, FilterStatusPipe],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, DialogModule, ButtonModule, InputGroupModule, InputGroupAddonModule, InputTextareaModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TableModule, DialogModule, ButtonModule, InputGroupModule, InputGroupAddonModule, InputTextareaModule, InputTextModule],
   providers: [DatePipe, FilterStatusPipe],
   exports: [ManageTasksComponent, TaskListComponent, AddTaskComponent, SearchTasksComponent],
 })

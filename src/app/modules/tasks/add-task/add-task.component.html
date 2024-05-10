@@ -1,18 +1,18 @@
 <div class="card justify-content-center flex">
-  <p-button (click)="showDialog()" label="Add Task" class="button bg-blue-500 hover:bg-blue-600"></p-button>
+  <p-button (click)="onToggleDialogAndReset()" label="Add Task" class="button bg-blue-500 hover:bg-blue-600"></p-button>
 
-  <p-dialog header="Header" [(visible)]="visible" [modal]="true" [style]="{ width: '50rem', height: 'fit-content' }"
+  <p-dialog header="Header" [(visible)]="isVisible" [modal]="true" [style]="{ width: '50rem', height: 'fit-content' }"
     [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
     <ng-template pTemplate="header">
       <span class="bg-blue-50 px-3 py-2 font-bold">New Task</span>
     </ng-template>
-    <form [formGroup]="taskForm">
+    <form [formGroup]="form">
       <!-- // Task -->
       <div class="form-group">
         <label class="label" for="task">Task:</label>
         <input class="input mb-2" type="text" name="task" placeholder="Task" formControlName="task" />
-        <span *ngIf="taskForm.get('task')?.invalid && taskForm.get('task')?.touched" class="error-message">*Task cannot
-          be empty.</span>
+        <span *ngIf="form.get('task')?.invalid && form.get('task')?.touched" class="error-message">*Task cannot be
+          empty.</span>
       </div>
 
       <!-- // Description -->
@@ -30,19 +30,21 @@
           <option value="progress">Progress</option>
           <option value="complete">Complete</option>
         </select>
+        <span *ngIf="form.get('status')?.invalid && form.get('status')?.touched" class="error-message">*Please select a
+          status.</span>
       </div>
 
       <!-- Due Date -->
       <div class="form-group">
         <label class="label" for="due-date">Due Date:</label>
         <input class="input mb-2" type="date" name="due-date" formControlName="dueDate" />
-        <span *ngIf="taskForm.get('dueDate')?.invalid && taskForm.get('dueDate')?.touched" class="error-message">*A due
-          date must be chosen.</span>
+        <span *ngIf="form.get('dueDate')?.invalid && form.get('dueDate')?.touched" class="error-message">*A due date
+          must be chosen.</span>
       </div>
 
       <!-- // Button -->
       <div class="flex justify-end">
-        <p-button [disabled]="!taskForm.valid" (click)="onAddNewTask()" label="Post"
+        <p-button [disabled]="!form.valid" (click)="onAddNewTask()" label="Post"
           class="button bg-blue-500 hover:bg-blue-600"></p-button>
       </div>
     </form>
