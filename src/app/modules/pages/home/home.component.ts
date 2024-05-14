@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core'
-import { Observable } from 'rxjs'
+import { Observable, tap } from 'rxjs'
 import { Task } from '../../../shared/types/task.type'
 import { TaskService } from '../../../shared/services/task.service'
 
@@ -13,7 +13,10 @@ export class HomeComponent implements OnInit {
 
   public tasks$!: Observable<Task[]>
 
-  constructor() { }
+  constructor() {
+    // Delete
+    this.taskService.fetchTasks().pipe(tap(tasks => console.log(tasks))).subscribe()
+  }
 
   ngOnInit(): void {
     this.tasks$ = this.taskService.fetchTasks()

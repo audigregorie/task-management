@@ -11,6 +11,7 @@ import { TaskSharedService } from '../../../shared/services/task-shared.service'
   styleUrl: './task-list.component.scss',
 })
 export class TaskListComponent implements OnInit, OnDestroy {
+
   private taskService = inject(TaskService)
   private taskSharedService = inject(TaskSharedService)
 
@@ -42,7 +43,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
   // Fetch tasks from the service pulling from the server.
   public fetchTasks() {
-    this.taskService.fetchTasks()
+    this.taskService.fetchTasks().pipe(takeUntil(this.destroy$), tap((tasks) => (this.tasks = tasks))).subscribe()
   }
 
   // Create an unmodified raw Tasks array.
@@ -52,22 +53,22 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
   // Update through the selected status.
   public updateSelectStatus() {
-    this.taskSharedService.selectStatus$.pipe(takeUntil(this.destroy$), map((status) => (this.selectStatus = status))).subscribe()
+    this.taskSharedService.selectStatus$.pipe(takeUntil(this.destroy$), map((status) => this.selectStatus = status)).subscribe()
   }
 
   // Update the count of tasks filtered by selected status.
   public updateFilterStatusCount() {
-    this.taskSharedService.filterStatusCount$.pipe(takeUntil(this.destroy$), map((count) => (count ? (this.totalTaskCount = count) : this.getTotalTaskCount()))).subscribe()
+    this.taskSharedService.filterStatusCount$.pipe(takeUntil(this.destroy$), map((count) => count ? (this.totalTaskCount = count) : this.getTotalTaskCount())).subscribe()
   }
 
   // Update by searched tasks.
   public updateSearchTasks() {
-    this.taskSharedService.searchTasks$.pipe(takeUntil(this.destroy$), map((searchedTasks) => (this.tasks = searchedTasks))).subscribe()
+    this.taskSharedService.searchTasks$.pipe(takeUntil(this.destroy$), map((searchedTasks) => this.tasks = searchedTasks)).subscribe()
   }
 
   // Get number of tasks from the service pulling from the server.
   public getTotalTaskCount() {
-    this.taskService.tasks$.pipe(takeUntil(this.destroy$), map((tasks) => this.totalTaskCount = tasks.length)).subscribe()
+    this.taskService.tasks$.pipe((takeUntil(this.destroy$)), map(tasks => { this.totalTaskCount = tasks.length })).subscribe()
   }
 
   // Toggle dropdown by id.
@@ -81,13 +82,13 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   // Close dropdown after item selected.
-  public closeDropdown() {
+  public onCloseDropdown() {
     this.openDropdownId = null
   }
 
-  public closeDropdownAndEmit() {
+  public onCloseDropdownAndEmit() {
     this.update.emit()
-    this.closeDropdown()
+    this.onCloseDropdown()
   }
 
   // Cycle through task statuses if editing.
@@ -100,7 +101,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
   // Delete task.
   public onDelete(taskId: string) {
-    this.taskService.deleteTask(taskId).pipe(takeUntil(this.destroy$), tap(() => this.closeDropdownAndEmit())).subscribe()
+    this.taskService.deleteTask(taskId).pipe(takeUntil(this.destroy$), tap(() => this.onCloseDropdownAndEmit())).subscribe()
   }
 
   // Cancel editing.
@@ -115,23 +116,22 @@ export class TaskListComponent implements OnInit, OnDestroy {
       task: originalTask.task,
     }
 
-    this.closeDropdown()
+    this.onCloseDropdown()
   }
 
   // Update task after editing.
   public onUpdate(task: Task, taskId: string) {
     const editedTask = { ...task, isEditing: false }
-    this.taskService.updateTask(editedTask, taskId).pipe(takeUntil(this.destroy$), tap(() => this.closeDropdownAndEmit())).subscribe()
+    this.taskService.updateTask(editedTask, taskId).pipe(takeUntil(this.destroy$), tap(() => this.onCloseDropdownAndEmit())).subscribe()
   }
 
   // Mange dropdown option whether to update or edit.
   public onManageProceed(task: Task) {
-    task.isEditing ? this.onUpdate(task, task.id) : this.onToggleEditing(task)
+    task.isEditing ? this.onUpdate(task, task.id) : this.onToggleEditing(task);
   }
 
   // Mange dropdown option whether to cancel or delete.
   public onManageRevert(task: Task) {
     task.isEditing ? this.onCancel(task) : this.onDelete(task.id)
   }
-
 }

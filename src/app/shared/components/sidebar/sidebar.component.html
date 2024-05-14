@@ -3,25 +3,25 @@
     <div class="flex flex-col gap-8 pt-16 text-xl text-gray-500">
       <!-- All -->
       <div (click)="showAllTasks()" class="flex gap-8 px-12 hover:text-black">
-        <div class="w-1 bg-blue-400"></div>
+        <div class="w-1 status-blue"></div>
         <a>All</a>
       </div>
 
       <!-- Incomplete -->
       <div (click)="showOpenTasks()" class="flex gap-8 px-12 hover:text-black">
-        <div class="w-1 bg-red-400"></div>
+        <div class="w-1 bg-red-500"></div>
         <a>Open</a>
       </div>
 
       <!-- In Progress -->
       <div (click)="showProgressTasks()" class="flex gap-8 px-12 hover:text-black">
-        <div class="w-1 bg-violet-400"></div>
+        <div class="w-1 status-purple"></div>
         <a>Progress</a>
       </div>
 
       <!-- Complete -->
       <div (click)="showCompletedTasks()" class="flex gap-8 px-12 hover:text-black">
-        <div class="w-1 bg-green-400"></div>
+        <div class="w-1 status-green"></div>
         <a>Complete</a>
       </div>
     </div>

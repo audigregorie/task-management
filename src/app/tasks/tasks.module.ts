@@ -25,4 +25,4 @@ import { TaskListComponent } from '../modules/tasks/task-list/task-list.componen
   providers: [DatePipe, FilterStatusPipe],
   exports: [ManageTasksComponent, TaskListComponent, AddTaskComponent, SearchTasksComponent],
 })
-export class TasksModule {}
+export class TasksModule { }

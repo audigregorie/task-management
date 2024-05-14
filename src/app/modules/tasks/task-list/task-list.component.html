@@ -16,8 +16,8 @@
           <td (click)="task.isEditing ? cycleStatus(task) : null"
             class="mt-1 flex basis-1/12 cursor-pointer items-start justify-center">
             <div *ngIf="task.status === taskStatuses.open" class="h-8 w-1 bg-red-500"></div>
-            <div *ngIf="task.status === taskStatuses.progress" class="h-8 w-1 bg-violet-500"></div>
-            <div *ngIf="task.status === taskStatuses.complete" class="h-8 w-1 bg-green-500"></div>
+            <div *ngIf="task.status === taskStatuses.progress" class="h-8 w-1 status-purple"></div>
+            <div *ngIf="task.status === taskStatuses.complete" class="h-8 w-1 status-green"></div>
           </td>
 
           <!-- Task -->

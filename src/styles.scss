@@ -20,6 +20,7 @@ body {
   @apply font-['Roboto'] text-[16px] font-normal;
 }
 
+// Debugging
 .debug {
   @apply border-2 border-red-500;
 }
@@ -27,4 +28,17 @@ body {
 // Buttons
 .button {
   @apply rounded px-6 py-2 font-bold text-white;
+}
+
+// Colors
+.status-blue {
+@apply bg-[#0077CC]
+}
+
+.status-purple {
+  @apply bg-[#5B1DE7]
+}
+
+.status-green {
+  @apply bg-[#00CC66]
 }
