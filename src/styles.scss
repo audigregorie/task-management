@@ -1,6 +1,4 @@
 @import '../node_modules/modern-normalize/modern-normalize.css';
-@import 'primeng/resources/themes/lara-light-blue/theme.css';
-@import 'primeng/resources/primeng.css';
 @import 'primeicons/primeicons.css';
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
 
@@ -32,13 +30,13 @@ body {
 
 // Colors
 .status-blue {
-@apply bg-[#0077CC]
+  @apply bg-[#0077CC];
 }
 
 .status-purple {
-  @apply bg-[#5B1DE7]
+  @apply bg-[#5B1DE7];
 }
 
 .status-green {
-  @apply bg-[#00CC66]
+  @apply bg-[#00CC66];
 }
