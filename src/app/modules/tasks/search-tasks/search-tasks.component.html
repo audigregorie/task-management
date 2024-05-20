@@ -1,4 +1,13 @@
-<form [formGroup]="form" class="ml-[7.750rem] flex h-8 w-[50.625rem] items-center rounded border border-gray-400">
-  <input type="text" id="search" placeholder="Filter tasks..." pInputText formControlName="search"
-    class="ml-2 h-full w-full rounded border-l-transparent focus:outline-none" />
+<form
+  [formGroup]="form"
+  class="ml-[7.750rem] flex h-8 w-[50.625rem] items-center rounded border border-gray-400 focus:outline-none"
+>
+  <input
+    type="text"
+    id="search"
+    placeholder="Filter tasks..."
+    pInputText
+    formControlName="search"
+    class="ml-2 h-full w-full rounded border-l-transparent focus:border-none focus:outline-none"
+  />
 </form>
