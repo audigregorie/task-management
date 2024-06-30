@@ -11,4 +11,6 @@ Tools used:
 - PrimeNG
 - TailwindCSS
 
+Check out the live demo of this app at [TaskManager](https://audigregorie.github.io/task-management-app-prod/)
+
 \_ AY 2024
